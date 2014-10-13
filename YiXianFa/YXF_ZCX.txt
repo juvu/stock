@@ -1,0 +1,65 @@
+CURRBARSCOUNT:=DATACOUNT-BARPOS+1;
+
+zTurnPoint:=ZIG(C,5);
+lowPeakPoints:=zTurnPoint<REF(zTurnPoint,1) AND zTurnPoint<REFX(zTurnPoint,1) AND CURRBARSCOUNT>10;
+lowPoint1:=BARSLAST(lowPeakPoints=1);
+lowPoint2:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>60);
+lowPoint3:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>120);
+priceOfLowPoint1:= NUMTOSTR(REF(C,lowPoint1),2);
+priceOfLowPoint2:= NUMTOSTR(REF(C,lowPoint2),2);
+priceOfLowPoint3:= NUMTOSTR(REF(C,lowPoint3),2);
+
+DRAWICON(lowPeakPoints=1,LOW,4);
+
+closePrice:close,LINETHICK0;
+
+VARIABLE:valueOfMA1s[400]=0;
+valueOfMA1s[1]:=STRTONUM(priceOfLowPoint1);
+CONST_lowPoint1:=STRTONUM(NUMTOSTR(lowPoint1,0));
+supportLine1:= -1;
+FOR i=2 to 400 DO 
+BEGIN
+  valueOfMA1s[i]:(valueOfMA1s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint1-i+1])/i;
+  IF (valueOfMA1s[i]-valueOfMA1s[1])/valueOfMA1s[1]<0.02 AND valueOfMA1s[i]<valueOfMA1s[1] AND supportLine1=-1 THEN 
+	BEGIN
+    supportLine1:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,0,0,'短期支撑:MA['+NUMTOSTR(supportLine1,0)+']');
+短期支撑:MA(C,supportLine1),COLORRED;
+
+VARIABLE:valueOfMA2s[400]=0;
+valueOfMA2s[1]:=STRTONUM(priceOfLowPoint2);
+CONST_lowPoint2:=STRTONUM(NUMTOSTR(lowPoint2,0));
+supportLine2:= -1;
+FOR j=2 to 400 DO 
+BEGIN
+  valueOfMA2s[j]:(valueOfMA2s[j-1]*(j-1)+closePrice[DATACOUNT-CONST_lowPoint2-j+1])/j;
+  IF  ABS(valueOfMA2s[j]-valueOfMA2s[1])/valueOfMA2s[1]<0.02 AND valueOfMA2s[j]<valueOfMA2s[1] THEN 
+	BEGIN
+    supportLine2:=j;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,100,0,'中期支撑:MA['+NUMTOSTR(supportLine2,0)+']');
+中期支撑:MA(C,supportLine2),COLORYELLOW;
+
+VARIABLE:valueOfMA3s[400]=0;
+valueOfMA3s[1]:=STRTONUM(priceOfLowPoint3);
+CONST_lowPoint3:=STRTONUM(NUMTOSTR(lowPoint3,0));
+supportLine3:= -1;
+FOR i=2 to 400 DO 
+BEGIN
+  valueOfMA3s[i]:(valueOfMA3s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint3-i+1])/i;
+  IF  ABS(valueOfMA3s[i]-valueOfMA3s[1])/valueOfMA3s[1]<0.02 AND valueOfMA3s[i]<valueOfMA3s[1] THEN 
+	BEGIN
+    supportLine3:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,200,0,'长期支撑:MA['+NUMTOSTR(supportLine3,0)+']');
+长期支撑:MA(C,supportLine3),COLORBLUE;

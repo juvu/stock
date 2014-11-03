@@ -1,0 +1,125 @@
+CURRBARSCOUNT:=DATACOUNT-BARPOS+1;
+
+zTurnPoint:=ZIG(C,5);
+
+highPeakPoints:=zTurnPoint>REF(zTurnPoint,1) AND zTurnPoint>REFX(zTurnPoint,1) AND CURRBARSCOUNT>10;
+highPoint1:=BARSLAST(highPeakPoints=1);
+highPoint2:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>30);
+highPoint3:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>60);
+highPoint4:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>90);
+highPoint5:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>120);
+highPoint6:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>250);
+priceOfHPoint1:= NUMTOSTR(REF(C,highPoint1),2);
+priceOfHPoint2:= NUMTOSTR(REF(C,highPoint2),2);
+priceOfHPoint3:= NUMTOSTR(REF(C,highPoint3),2);
+priceOfHPoint4:= NUMTOSTR(REF(C,highPoint4),2);
+priceOfHPoint5:= NUMTOSTR(REF(C,highPoint5),2);
+priceOfHPoint6:= NUMTOSTR(REF(C,highPoint6),2);
+
+DRAWICON(highPeakPoints=1,HIGH,5);
+
+closePrice:close,LINETHICK0;
+
+VARIABLE:valueOfTopMA1s[600]=0;
+valueOfTopMA1s[1]:=STRTONUM(priceOfHPoint1);
+CONST_highPoint1:=STRTONUM(NUMTOSTR(highPoint1,0));
+topLine1:= -1;
+FOR i=2 to 600 DO 
+BEGIN
+  valueOfTopMA1s[i]:(valueOfTopMA1s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_highPoint1-i+1])/i;
+  IF ABS(valueOfTopMA1s[i]-valueOfTopMA1s[1])/valueOfTopMA1s[1]<0.02 AND valueOfTopMA1s[i]>valueOfTopMA1s[1] AND topLine1=-1 THEN 
+	BEGIN
+    topLine1:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,0,20,'短期压制1:MA['+NUMTOSTR(topLine1,0)+']');
+短期压制1:MA(C,topLine1),COLORWHITE;
+
+VARIABLE:valueOfTopMA2s[600]=0;
+valueOfTopMA2s[1]:=STRTONUM(priceOfHPoint2);
+CONST_highPoint2:=STRTONUM(NUMTOSTR(highPoint2,0));
+topLine2:= -1;
+FOR i=2 to 600 DO 
+BEGIN
+  valueOfTopMA2s[i]:(valueOfTopMA2s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_highPoint2-i+1])/i;
+  IF ABS(valueOfTopMA2s[i]-valueOfTopMA2s[1])/valueOfTopMA2s[1]<0.02 AND valueOfTopMA2s[i]>valueOfTopMA2s[1] AND topLine2=-1 THEN 
+	BEGIN
+    topLine2:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,0,0,'短期压制2:MA['+NUMTOSTR(topLine2,0)+']');
+短期压制2:MA(C,topLine2),COLORWHITE;
+
+
+
+VARIABLE:valueOfTopMA3s[600]=0;
+valueOfTopMA3s[1]:=STRTONUM(priceOfHPoint3);
+CONST_highPoint3:=STRTONUM(NUMTOSTR(highPoint3,0));
+topLine3:= -1;
+FOR i=2 to 600 DO 
+BEGIN
+  valueOfTopMA3s[i]:(valueOfTopMA3s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_highPoint3-i+1])/i;
+  IF ABS(valueOfTopMA3s[i]-valueOfTopMA3s[1])/valueOfTopMA3s[1]<0.02 AND valueOfTopMA3s[i]>valueOfTopMA3s[1] AND topLine3=-1 THEN 
+	BEGIN
+    topLine3:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,100,20,'中期压制1:MA['+NUMTOSTR(topLine3,0)+']');
+中期压制1:MA(C,topLine3),COLORBLUE;
+
+VARIABLE:valueOfTopMA4s[600]=0;
+valueOfTopMA4s[1]:=STRTONUM(priceOfHPoint4);
+CONST_highPoint4:=STRTONUM(NUMTOSTR(highPoint4,0));
+topLine4:= -1;
+FOR i=2 to 600 DO 
+BEGIN
+  valueOfTopMA4s[i]:(valueOfTopMA4s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_highPoint4-i+1])/i;
+  IF ABS(valueOfTopMA4s[i]-valueOfTopMA4s[1])/valueOfTopMA4s[1]<0.02 AND valueOfTopMA4s[i]>valueOfTopMA4s[1] AND topLine4=-1 THEN 
+	BEGIN
+    topLine4:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,100,0,'中期压制2:MA['+NUMTOSTR(topLine4,0)+']');
+中期压制2:MA(C,topLine4),COLORYELLOW;
+
+VARIABLE:valueOfTopMA5s[600]=0;
+valueOfTopMA5s[1]:=STRTONUM(priceOfHPoint5);
+CONST_highPoint5:=STRTONUM(NUMTOSTR(highPoint5,0));
+topLine5:= -1;
+FOR i=2 to 600 DO 
+BEGIN
+  valueOfTopMA5s[i]:(valueOfTopMA5s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_highPoint5-i+1])/i;
+  IF ABS(valueOfTopMA5s[i]-valueOfTopMA5s[1])/valueOfTopMA5s[1]<0.02 AND valueOfTopMA5s[i]>valueOfTopMA5s[1] AND topLine5=-1 THEN 
+	BEGIN
+    topLine5:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,200,20,'长期压制1:MA['+NUMTOSTR(topLine5,0)+']');
+长期压制1:MA(C,topLine5),COLORGRAY;
+
+VARIABLE:valueOfTopMA6s[600]=0;
+valueOfTopMA6s[1]:=STRTONUM(priceOfHPoint6);
+CONST_highPoint6:=STRTONUM(NUMTOSTR(highPoint6,0));
+topLine6:= -1;
+FOR i=2 to 600 DO 
+BEGIN
+  valueOfTopMA6s[i]:(valueOfTopMA6s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_highPoint6-i+1])/i;
+  IF ABS(valueOfTopMA6s[i]-valueOfTopMA6s[1])/valueOfTopMA6s[1]<0.02 AND valueOfTopMA6s[i]>valueOfTopMA6s[1] AND topLine6=-1 THEN 
+	BEGIN
+    topLine6:=i;
+	  break;
+   END;
+END;
+
+DRAWTEXTEX(1,0,200,0,'长期压制2:MA['+NUMTOSTR(topLine6,0)+']');
+长期压制2:MA(C,topLine6),COLORBLUE;

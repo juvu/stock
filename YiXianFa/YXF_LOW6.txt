@@ -2,32 +2,32 @@ CURRBARSCOUNT:=DATACOUNT-BARPOS+1;
 
 zTurnPoint:=ZIG(C,5);
 
-lowPeakPoints:=zTurnPoint>REF(zTurnPoint,1) AND zTurnPoint>REFX(zTurnPoint,1) AND CURRBARSCOUNT>10;
+lowPeakPoints:=zTurnPoint<REF(zTurnPoint,1) AND zTurnPoint<REFX(zTurnPoint,1) AND CURRBARSCOUNT>10;
 lowPoint1:=BARSLAST(lowPeakPoints=1);
 lowPoint2:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>30);
 lowPoint3:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>60);
 lowPoint4:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>90);
 lowPoint5:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>120);
 lowPoint6:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>250);
-priceOfHPoint1:= NUMTOSTR(REF(C,lowPoint1),2);
-priceOfHPoint2:= NUMTOSTR(REF(C,lowPoint2),2);
-priceOfHPoint3:= NUMTOSTR(REF(C,lowPoint3),2);
-priceOfHPoint4:= NUMTOSTR(REF(C,lowPoint4),2);
-priceOfHPoint5:= NUMTOSTR(REF(C,lowPoint5),2);
-priceOfHPoint6:= NUMTOSTR(REF(C,lowPoint6),2);
+priceOfLPoint1:= NUMTOSTR(REF(C,lowPoint1),2);
+priceOfLPoint2:= NUMTOSTR(REF(C,lowPoint2),2);
+priceOfLPoint3:= NUMTOSTR(REF(C,lowPoint3),2);
+priceOfLPoint4:= NUMTOSTR(REF(C,lowPoint4),2);
+priceOfLPoint5:= NUMTOSTR(REF(C,lowPoint5),2);
+priceOfLPoint6:= NUMTOSTR(REF(C,lowPoint6),2);
 
 DRAWICON(lowPeakPoints=1,low,5);
 
 closePrice:close,LINETHICK0;
 
 VARIABLE:valueOfTopMA1s[600]=0;
-valueOfTopMA1s[1]:=STRTONUM(priceOfHPoint1);
+valueOfTopMA1s[1]:=STRTONUM(priceOfLPoint1);
 CONST_lowPoint1:=STRTONUM(NUMTOSTR(lowPoint1,0));
 topLine1:= -1;
-FOR i=2 to 600 DO 
+FOR i=10 to 600 DO 
 BEGIN
   valueOfTopMA1s[i]:(valueOfTopMA1s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint1-i+1])/i;
-  IF ABS(valueOfTopMA1s[i]-valueOfTopMA1s[1])/valueOfTopMA1s[1]<0.02 AND valueOfTopMA1s[i]>valueOfTopMA1s[1] AND topLine1=-1 THEN 
+  IF ABS(valueOfTopMA1s[i]-valueOfTopMA1s[1])/valueOfTopMA1s[1]<0.02 AND valueOfTopMA1s[i]<valueOfTopMA1s[1] AND topLine1=-1 THEN 
 	BEGIN
     topLine1:=i;
 	  break;
@@ -38,13 +38,13 @@ DRAWTEXTEX(1,0,0,20,'短期支撑1:MA['+NUMTOSTR(topLine1,0)+']');
 短期支撑1:MA(C,topLine1),COLORWHITE;
 
 VARIABLE:valueOfTopMA2s[600]=0;
-valueOfTopMA2s[1]:=STRTONUM(priceOfHPoint2);
+valueOfTopMA2s[1]:=STRTONUM(priceOfLPoint2);
 CONST_lowPoint2:=STRTONUM(NUMTOSTR(lowPoint2,0));
 topLine2:= -1;
-FOR i=2 to 600 DO 
+FOR i=10 to 600 DO 
 BEGIN
   valueOfTopMA2s[i]:(valueOfTopMA2s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint2-i+1])/i;
-  IF ABS(valueOfTopMA2s[i]-valueOfTopMA2s[1])/valueOfTopMA2s[1]<0.02 AND valueOfTopMA2s[i]>valueOfTopMA2s[1] AND topLine2=-1 THEN 
+  IF ABS(valueOfTopMA2s[i]-valueOfTopMA2s[1])/valueOfTopMA2s[1]<0.02 AND valueOfTopMA2s[i]<valueOfTopMA2s[1] AND topLine2=-1 THEN 
 	BEGIN
     topLine2:=i;
 	  break;
@@ -54,16 +54,14 @@ END;
 DRAWTEXTEX(1,0,0,0,'短期支撑2:MA['+NUMTOSTR(topLine2,0)+']');
 短期支撑2:MA(C,topLine2),COLORWHITE;
 
-
-
 VARIABLE:valueOfTopMA3s[600]=0;
-valueOfTopMA3s[1]:=STRTONUM(priceOfHPoint3);
+valueOfTopMA3s[1]:=STRTONUM(priceOfLPoint3);
 CONST_lowPoint3:=STRTONUM(NUMTOSTR(lowPoint3,0));
 topLine3:= -1;
-FOR i=2 to 600 DO 
+FOR i=10 to 600 DO 
 BEGIN
   valueOfTopMA3s[i]:(valueOfTopMA3s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint3-i+1])/i;
-  IF ABS(valueOfTopMA3s[i]-valueOfTopMA3s[1])/valueOfTopMA3s[1]<0.02 AND valueOfTopMA3s[i]>valueOfTopMA3s[1] AND topLine3=-1 THEN 
+  IF ABS(valueOfTopMA3s[i]-valueOfTopMA3s[1])/valueOfTopMA3s[1]<0.02 AND valueOfTopMA3s[i]<valueOfTopMA3s[1] AND topLine3=-1 THEN 
 	BEGIN
     topLine3:=i;
 	  break;
@@ -74,13 +72,13 @@ DRAWTEXTEX(1,0,100,20,'中期支撑1:MA['+NUMTOSTR(topLine3,0)+']');
 中期支撑1:MA(C,topLine3),COLORBLUE;
 
 VARIABLE:valueOfTopMA4s[600]=0;
-valueOfTopMA4s[1]:=STRTONUM(priceOfHPoint4);
+valueOfTopMA4s[1]:=STRTONUM(priceOfLPoint4);
 CONST_lowPoint4:=STRTONUM(NUMTOSTR(lowPoint4,0));
 topLine4:= -1;
-FOR i=2 to 600 DO 
+FOR i=10 to 600 DO 
 BEGIN
   valueOfTopMA4s[i]:(valueOfTopMA4s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint4-i+1])/i;
-  IF ABS(valueOfTopMA4s[i]-valueOfTopMA4s[1])/valueOfTopMA4s[1]<0.02 AND valueOfTopMA4s[i]>valueOfTopMA4s[1] AND topLine4=-1 THEN 
+  IF ABS(valueOfTopMA4s[i]-valueOfTopMA4s[1])/valueOfTopMA4s[1]<0.02 AND valueOfTopMA4s[i]<valueOfTopMA4s[1] AND topLine4=-1 THEN 
 	BEGIN
     topLine4:=i;
 	  break;
@@ -91,13 +89,13 @@ DRAWTEXTEX(1,0,100,0,'中期支撑2:MA['+NUMTOSTR(topLine4,0)+']');
 中期支撑2:MA(C,topLine4),COLORYELLOW;
 
 VARIABLE:valueOfTopMA5s[600]=0;
-valueOfTopMA5s[1]:=STRTONUM(priceOfHPoint5);
+valueOfTopMA5s[1]:=STRTONUM(priceOfLPoint5);
 CONST_lowPoint5:=STRTONUM(NUMTOSTR(lowPoint5,0));
 topLine5:= -1;
-FOR i=2 to 600 DO 
+FOR i=10 to 600 DO 
 BEGIN
   valueOfTopMA5s[i]:(valueOfTopMA5s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint5-i+1])/i;
-  IF ABS(valueOfTopMA5s[i]-valueOfTopMA5s[1])/valueOfTopMA5s[1]<0.02 AND valueOfTopMA5s[i]>valueOfTopMA5s[1] AND topLine5=-1 THEN 
+  IF ABS(valueOfTopMA5s[i]-valueOfTopMA5s[1])/valueOfTopMA5s[1]<0.02 AND valueOfTopMA5s[i]<valueOfTopMA5s[1] AND topLine5=-1 THEN 
 	BEGIN
     topLine5:=i;
 	  break;
@@ -108,13 +106,13 @@ DRAWTEXTEX(1,0,200,20,'长期支撑1:MA['+NUMTOSTR(topLine5,0)+']');
 长期支撑1:MA(C,topLine5),COLORGRAY;
 
 VARIABLE:valueOfTopMA6s[600]=0;
-valueOfTopMA6s[1]:=STRTONUM(priceOfHPoint6);
+valueOfTopMA6s[1]:=STRTONUM(priceOfLPoint6);
 CONST_lowPoint6:=STRTONUM(NUMTOSTR(lowPoint6,0));
 topLine6:= -1;
-FOR i=2 to 600 DO 
+FOR i=10 to 600 DO 
 BEGIN
   valueOfTopMA6s[i]:(valueOfTopMA6s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint6-i+1])/i;
-  IF ABS(valueOfTopMA6s[i]-valueOfTopMA6s[1])/valueOfTopMA6s[1]<0.02 AND valueOfTopMA6s[i]>valueOfTopMA6s[1] AND topLine6=-1 THEN 
+  IF ABS(valueOfTopMA6s[i]-valueOfTopMA6s[1])/valueOfTopMA6s[1]<0.02 AND valueOfTopMA6s[i]<valueOfTopMA6s[1] AND topLine6=-1 THEN 
 	BEGIN
     topLine6:=i;
 	  break;

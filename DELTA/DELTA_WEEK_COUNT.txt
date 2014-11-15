@@ -1,0 +1,30 @@
+CURRBARSCOUNT:=DATACOUNT-BARPOS+1;
+zTurnPoints:ZIG(3,5),LineThick0;
+isKey:= (zTurnPoints>ref(zTurnPoints,1) AND zTurnPoints>refx(zTurnPoints,1))
+        OR (zTurnPoints<ref(zTurnPoints,1) AND zTurnPoints<refx(zTurnPoints,1))
+        AND CURRBARSCOUNT<1200;
+serial: (LMONTH-1)*30+LDAY,LineThick0;
+turnPoints:if(isKey,serial,0),LineThick0;
+VARIABLE: rate=serial,rateOfTurn[360]=0,temp=0;
+
+for i=10 to DATACOUNT do
+begin
+  if turnPoints[i]>0 then
+  begin
+   temp:=rateOfTurn[turnPoints[i]];
+   rateOfTurn[turnPoints[i]]:=temp+1;
+  end;
+end;
+
+for i=1 to DATACOUNT do
+begin
+  temp:=rate[i];
+ // if temp>1 and temp<360 then
+ //   rate[i]:=(rateOfTurn[temp]*2+rateOfTurn[temp-1]*0.5+rateOfTurn[temp+1]*0.5)/3;
+ // else
+    rate[i]:=rateOfTurn[temp];
+end;
+
+turnRate:rate,LineThick0;
+
+STICKLINEEX(1,0,if(rate>5,rate*200,rate*100),2,1)colorred;

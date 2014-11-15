@@ -1,0 +1,120 @@
+//红线之后
+VARIABLE:points[16]=0;
+points[1]:= 1;
+points[2]:= 7;
+points[3]:= 0; 
+points[4]:= 0;
+//绿线之后
+points[5]:= 2;
+points[6]:= 9;
+points[7]:= 0;
+points[8]:= 0;
+//白线之后
+points[9]:=  1;
+points[10]:= 5;
+points[11]:= 11;
+points[12]:= 0;
+//黄线之后
+points[13]:=  1;
+points[14]:= 3;
+points[15]:= 11;
+points[16]:= 0;
+
+flag:=0;
+VARIABLE:serialFlag[16]=0;
+FOR i=1 to 16 DO
+BEGIN
+	IF points[i]>0 THEN 
+   	BEGIN
+       flag:= flag + 1;
+	    serialFlag[i]:= flag;
+	   END;
+  ELSE
+     serialFlag[i]:= 0;
+END;
+
+DRAWTEXTEX(1,1,0,0,NUMTOSTR(serialFlag[1],0)+'. 红 '+NUMTOSTR(points[1],0)), COLORRED;
+DRAWTEXTEX(1,1,0,40,NUMTOSTR(serialFlag[2],0)+'. 红 '+NUMTOSTR(points[2],0)), COLORRED;
+DRAWTEXTEX(1,1,0,80,NUMTOSTR(serialFlag[3],0)+'. 红 '+NUMTOSTR(points[3],0)), COLORRED;
+DRAWTEXTEX(1,1,0,120,NUMTOSTR(serialFlag[4],0)+'. 红 '+NUMTOSTR(points[4],0)), COLORRED;
+
+DRAWTEXTEX(1,1,100,0,NUMTOSTR(serialFlag[5],0)+'. 绿 '+NUMTOSTR(points[5],0)), COLORGREEN;
+DRAWTEXTEX(1,1,100,40,NUMTOSTR(serialFlag[6],0)+'. 绿 '+NUMTOSTR(points[6],0)), COLORGREEN;
+DRAWTEXTEX(1,1,100,80,NUMTOSTR(serialFlag[7],0)+'. 绿 '+NUMTOSTR(points[7],0)), COLORGREEN;
+DRAWTEXTEX(1,1,100,120,NUMTOSTR(serialFlag[8],0)+'. 绿 '+NUMTOSTR(points[8],0)), COLORGREEN;
+
+DRAWTEXTEX(1,1,200,0,NUMTOSTR(serialFlag[9],0)+'. 白 '+NUMTOSTR(points[9],0)), COLORWHITE;
+DRAWTEXTEX(1,1,200,40,NUMTOSTR(serialFlag[10],0)+'. 白 '+NUMTOSTR(points[10],0)), COLORWHITE;
+DRAWTEXTEX(1,1,200,80,NUMTOSTR(serialFlag[11],0)+'. 白 '+NUMTOSTR(points[11],0)), COLORWHITE;
+DRAWTEXTEX(1,1,200,120,NUMTOSTR(serialFlag[12],0)+'. 白 '+NUMTOSTR(points[12],0)), COLORWHITE;
+
+DRAWTEXTEX(1,1,300,0,NUMTOSTR(serialFlag[13],0)+'. 黄 '+NUMTOSTR(points[13],0)), COLORYELLOW;
+DRAWTEXTEX(1,1,300,40,NUMTOSTR(serialFlag[14],0)+'. 黄 '+NUMTOSTR(points[14],0)), COLORYELLOW;
+DRAWTEXTEX(1,1,300,80,NUMTOSTR(serialFlag[15],0)+'. 黄 '+NUMTOSTR(points[15],0)), COLORYELLOW;
+DRAWTEXTEX(1,1,300,120,NUMTOSTR(serialFlag[16],0)+'. 黄 '+NUMTOSTR(points[16],0)), COLORYELLOW;
+
+
+//KLINE(O,H,L,C,0);
+
+lunaCalendar:LDay,LineThick0,COLORYELLOW;
+isColor:=IF( (REF(lunaCalendar,1)>lunaCalendar OR lunaCalendar=1) AND DATE>1120501,1,0);    //农历初一，或者农历初一后的第一个交易日，就是绘制彩线的位置
+numOfColorLines:=COUNT(ISCOLOR=1,0);
+
+VERTLINE(isColor AND MOD(numOfColorLines,12)=0),COLORYELLOW; 
+VERTLINE(isColor AND MOD(numOfColorLines,12)=3),COLORRED;  
+VERTLINE(isColor AND MOD(numOfColorLines,12)=6),COLORGREEN; 
+VERTLINE(isColor AND MOD(numOfColorLines,12)=9),COLORWHITE;
+//VERTLINE(isColor),COLORBLUE;
+
+YELLOWLINE:= IF( (isColor AND MOD(numOfColorLines,12)=0), 1, 0);
+REDLINE:= IF( (isColor AND MOD(numOfColorLines,12)=3), 1, 0);
+GREENLINE:= IF( (isColor AND MOD(numOfColorLines,12)=6), 1, 0);
+WHITELINE:= IF( (isColor AND MOD(numOfColorLines,12)=9), 1, 0);
+
+pointAfterRed1:= IF( points[1]>0, IF( REF(REDLINE,points[1]-1)=1, 1, 0), 0);
+pointAfterRed2:= IF( points[2]>0, IF( REF(REDLINE,points[2]-1)=1, 1, 0), 0);
+pointAfterRed3:= IF( points[3]>0, IF( REF(REDLINE,points[3]-1)=1, 1, 0), 0);
+pointAfterRed4:= IF( points[4]>0, IF( REF(REDLINE,points[4]-1)=1, 1, 0), 0);
+
+lines:numOfColorLines,LineThick0;
+test:BARSLAST(REDLINE),LineThick0;
+
+pointAfterGreen1:= IF( points[5]>0, IF( REF(GREENLINE,points[5]-1)=1, 1, 0), 0);
+pointAfterGreen2:= IF( points[6]>0, IF( REF(GREENLINE,points[6]-1)=1, 1, 0), 0);
+pointAfterGreen3:= IF( points[7]>0, IF( REF(GREENLINE,points[7]-1)=1, 1, 0), 0);
+pointAfterGreen4:= IF( points[8]>0, IF( REF(GREENLINE,points[8]-1)=1, 1, 0), 0);
+
+pointAfterWhite1:= IF( points[9]>0, IF( REF(WHITELINE,points[9]-1)=1, 1, 0), 0);
+pointAfterWhite2:= IF( points[10]>0, IF( REF(WHITELINE,points[10]-1)=1, 1, 0), 0);
+pointAfterWhite3:= IF( points[11]>0, IF( REF(WHITELINE,points[11]-1)=1, 1, 0), 0);
+pointAfterWhite4:= IF( points[12]>0, IF( REF(WHITELINE,points[12]-1)=1, 1, 0), 0);
+
+pointAftYellow1:= IF( points[13]>0, IF( REF(YELLOWLINE,points[13]-1)=1, 1, 0), 0);
+pointAftYellow2:= IF( points[14]>0, IF( REF(YELLOWLINE,points[14]-1)=1, 1, 0), 0);
+pointAftYellow3:= IF( points[15]>0, IF( REF(YELLOWLINE,points[15]-1)=1, 1, 0), 0);
+pointAftYellow4:= IF( points[16]>0, IF( REF(YELLOWLINE,points[16]-1)=1, 1, 0), 0);
+
+DRAWTEXT(pointAfterRed1,L,NUMTOSTR(serialFlag[1],0)),COLORGREEN;
+DRAWTEXT(pointAfterRed2,L,NUMTOSTR(serialFlag[2],0)),COLORGREEN;
+DRAWTEXT(pointAfterRed3,L,NUMTOSTR(serialFlag[3],0)),COLORGREEN;
+DRAWTEXT(pointAfterRed4,L,NUMTOSTR(serialFlag[4],0)),COLORGREEN;
+
+DRAWTEXT(pointAfterGreen1,L,NUMTOSTR(serialFlag[5],0)),COLORGREEN;
+DRAWTEXT(pointAfterGreen2,L,NUMTOSTR(serialFlag[6],0)),COLORGREEN;
+DRAWTEXT(pointAfterGreen3,L,NUMTOSTR(serialFlag[7],0)),COLORGREEN;
+DRAWTEXT(pointAfterGreen4,L,NUMTOSTR(serialFlag[8],0)),COLORGREEN;
+
+DRAWTEXT(pointAfterWhite1,L,NUMTOSTR(serialFlag[9],0)),COLORGREEN;
+DRAWTEXT(pointAfterWhite2,L,NUMTOSTR(serialFlag[10],0)),COLORGREEN;
+DRAWTEXT(pointAfterWhite3,L,NUMTOSTR(serialFlag[11],0)),COLORGREEN;
+DRAWTEXT(pointAfterWhite4,L,NUMTOSTR(serialFlag[12],0)),COLORGREEN;
+
+DRAWTEXT(pointAftYellow1,L,NUMTOSTR(serialFlag[13],0)),COLORGREEN;
+DRAWTEXT(pointAftYellow2,L,NUMTOSTR(serialFlag[14],0)),COLORGREEN;
+DRAWTEXT(pointAftYellow3,L,NUMTOSTR(serialFlag[15],0)),COLORGREEN;
+DRAWTEXT(pointAftYellow4,L,NUMTOSTR(serialFlag[16],0)),COLORGREEN;
+
+STICKLINEEX(pointAfterRed1 or pointAfterRed2 or pointAfterRed3 or pointAfterRed4,0,100,4,0)COLORYELLOW;
+STICKLINEEX(pointAfterGreen1 or pointAfterGreen2 or pointAfterGreen3 or pointAfterGreen4,0,100,4,0)COLORYELLOW;
+STICKLINEEX(pointAfterWhite1 or pointAfterWhite2 or pointAfterWhite3 or pointAfterWhite4,0,100,4,0)COLORYELLOW;
+STICKLINEEX(pointAftYellow1 or pointAftYellow2 or pointAftYellow3 or pointAftYellow4,0,100,4,0)COLORYELLOW;

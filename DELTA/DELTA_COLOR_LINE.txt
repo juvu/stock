@@ -1,0 +1,92 @@
+DELTA彩线公式修正版 (2012-12-11 23:22:32)转载▼
+标签： 杂谈	分类： 杂谈
+     DELTA彩线绘制公式，最早公布在鼎砥论坛。其后不断有朋友问我在哪里有公式，公式怎么无法编译，以及其他一些问题。这里重贴所有绘图公式，这些公式可运行于飞狐、大交易师、阳光股道。
+ 
+     注：以下ITD公式、MTD公式，在同一日期所显示彩线颜色，对于每个股票都不一样，另有对各股票都彩线都一致的版本，未来将随同其他DELTA指标一并发表于新标志论坛的软件平台。
+
+     (1)Delta ITD公式
+//修正：原公式彩线有时会随屏幕变化而变短，现在已经没有
+//以下是正式代码，以上可不复制
+
+//绘制K线
+KLINE(O,H,L,C,0);
+
+//判断是否绘制彩线的位置
+农历:LDay,LineThick0,COLORYELLOW;
+isColor:=IF((REF(农历,1)<15  OR  REF(农历,1)>农历) AND 农历>=15,1,0);    //农历15，或者农历15后的第一个交易日，就是绘制彩线的位置
+NUM:=COUNT(ISCOLOR=1,0);                                                 //当前彩线的个数
+
+//绘制彩线
+VERTLINE(isColor AND MOD(NUM,4)=0),COLORRED;                  //绘制红色线
+VERTLINE(isColor AND MOD(NUM,4)=1),COLORYELLOW;               //绘制黄色线
+VERTLINE(isColor AND MOD(NUM,4)=2),COLORBLUE;                 //绘制蓝色线
+VERTLINE(isColor AND MOD(NUM,4)=3),COLORMAGENTA;              //绘制紫色线
+
+(2)Delta MTD公式
+//绘制K线
+KLINE(O,H,L,C,0);
+
+//判断是否绘制彩线的位置
+农历:LDay,LineThick0,COLORYELLOW;
+isColor:=if((ref(农历,1)<15  or ref(农历,1)>农历) and 农历>=15,1,0);  //农历15，或者农历15后的第一个交易日，就是绘制彩线的位置
+NUM:=COUNT(ISCOLOR=1,0);                                              //当前彩线的个数
+
+//绘制彩线
+VERTLINE(isColor and mod(Num,12)=0),colorred      ;
+VERTLINE(isColor and mod(Num,12)=3),coloryellow   ;
+VERTLINE(isColor and mod(Num,12)=6),colorblue     ;
+VERTLINE(isColor and mod(Num,12)=9),colormagenta  ;
+
+(3)DELTA LTD公式
+//可用于绘制K线
+KLINE(O,H,L,C,0);
+
+//判断是否绘制彩线的位置
+年:=year;
+isColor:=IF(年>REF(年,1),1,0);             //当K线的年份发生变化，就是绘制彩线的位置
+Num:=COUNT(isColor,0);                     //计算彩线个数
+
+//绘制彩线
+VERTLINE(isColor and mod(Num,4)=1),colorred      ;
+VERTLINE(isColor and mod(Num,4)=2),coloryellow   ;
+VERTLINE(isColor and mod(Num,4)=3),colorblue     ;
+VERTLINE(isColor and mod(Num,4)=0),colormagenta  ;
+
+
+（4）DELTA SLTD公式
+//绘制K线
+KLINE(O,H,L,C,0);
+
+//判断是否绘制彩线的位置
+月:=MONTH;
+isFirst:=IF(月<>REF(月,1),1,0);                           //K线月份发生变化的位置
+isColor:=IF(MOD(COUNT(isFirst,0),57)=1  AND isFirst,1,0); //每57个月绘制一次彩线;
+Num:=COUNT(isColor,0);                                    //计算彩线个数
+
+//绘制彩线
+VERTLINE(isColor and mod(Num,4)=1),colorred      ;
+VERTLINE(isColor and mod(Num,4)=2),coloryellow   ;
+VERTLINE(isColor and mod(Num,4)=3),colorblue     ;
+VERTLINE(isColor and mod(Num,4)=0),colormagenta  ;
+
+(5)DELTA STD 公式
+//绘制彩线
+KLINE(O,H,L,C,0);
+
+IF DATATYPE>5 THEN
+BEGIN
+  DRAWTEXTEX(ISLASTBAR,1,500,500,'本指标只适用于日线以下周期数据'),ALIGN3;
+  EXIT;
+END;
+
+//判断是否绘制彩线的位置
+日:=date;                                                      //求当前K线的日期
+isColor:=if(日>ref(日,1) or barpos=1,1,0);                     //当K线的日期发生变化时，就是新的彩线绘制位置
+DIS0:=if(barpos=1 or not(isColor),0,DATEDIFF(ref(日,1),日)-1); //星期六、星期日以及节假日也要考虑
+DIS:=SUM(DIS0,0);
+Num:=count(isColor,0)+DIS;                                    //计算彩线个数
+
+VERTLINE(isColor and mod(Num,4)=0),colorred      ;
+VERTLINE(isColor and mod(Num,4)=1),coloryellow   ;
+VERTLINE(isColor and mod(Num,4)=2),colorblue     ;
+VERTLINE(isColor and mod(Num,4)=3),colormagenta  ;

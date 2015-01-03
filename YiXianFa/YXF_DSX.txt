@@ -1,0 +1,317 @@
+#MAINCHART
+INPUT:
+  N(20, 5, 100);
+
+D:=1;
+
+CURRBARSCOUNT:=DATACOUNT-BARPOS+1;
+current:CURRBARSCOUNT,LINETHICK0;
+
+MA5:MA(C,5);
+
+MAC1:C,LINETHICK0;
+MAL1:L,LINETHICK0;
+
+highPeakPoints:H>REF(H,1) AND H>REFX(H,1)
+    AND ( REF(H,1)>REF(H,2) OR REFX(H,1)>REFX(H,2) )  
+    AND ( H>REF(H,2) AND H>REFX(H,2)) AND CURRBARSCOUNT>4 ,LINETHICK0;
+
+highPoint1:=BARSLAST(highPeakPoints=1);
+CONST_highPoint1:=STRTONUM(NUMTOSTR(highPoint1,0));
+highPoint2:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>CONST_highPoint1+1);
+CONST_highPoint2:=STRTONUM(NUMTOSTR(highPoint2,0));
+highPoint3:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>CONST_highPoint2+1);
+CONST_highPoint3:=STRTONUM(NUMTOSTR(highPoint3,0));
+highPoint4:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>CONST_highPoint3+1);
+CONST_highPoint4:=STRTONUM(NUMTOSTR(highPoint4,0));
+highPoint5:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>CONST_highPoint4+1);
+CONST_highPoint5:=STRTONUM(NUMTOSTR(highPoint5,0));
+highPoint6:=BARSLAST(highPeakPoints=1 AND CURRBARSCOUNT>CONST_highPoint5+1);
+CONST_highPoint6:=STRTONUM(NUMTOSTR(highPoint6,0));
+priceOfHPoint1:= NUMTOSTR(REF(H,highPoint1),4);
+priceOfHPoint2:= NUMTOSTR(REF(H,highPoint2),4);
+priceOfHPoint3:= NUMTOSTR(REF(H,highPoint3),4);
+priceOfHPoint4:= NUMTOSTR(REF(H,highPoint4),4);
+priceOfHPoint5:= NUMTOSTR(REF(H,highPoint5),4);
+priceOfHPoint6:= NUMTOSTR(REF(H,highPoint6),4);
+
+highPoint:BARSLAST(highPeakPoints=1),LINETHICK0;
+
+
+DRAWICON(highPeakPoints=1,H,4);
+
+closePrice:C,LINETHICK0;
+
+VARIABLE:valueOfTopMA1s[DATACOUNT-CONST_highPoint1+1]=0;
+valueOfTopMA1s[1]:=STRTONUM(priceOfHPoint1);
+
+topLine1:= -1;
+For i=2 TO DATACOUNT-CONST_highPoint1+1 DO 
+BEGIN
+  valueOfTopMA1s[i]:=(valueOfTopMA1s[i-1]*(i-1)+closePrice[CONST_highPoint1+i-1])/i;
+  IF ( (valueOfTopMA1s[i]>=valueOfTopMA1s[1] AND valueOfTopMA1s[i-1]<=valueOfTopMA1s[1]) 
+      OR (valueOfTopMA1s[i-1]>=valueOfTopMA1s[1] AND valueOfTopMA1s[i]<=valueOfTopMA1s[1])
+       )
+     AND i>20
+     AND topLine1=-1 THEN 
+	BEGIN
+    topLine1:=i;
+	  BREAK;
+   END;
+END;
+
+DRAWTEXTEX(1,0,0,20,'短期压制1:MA['+NUMTOSTR(topLine1,0)+']'),COLORWHITE;
+短压1:MA(C,topLine1),COLORWHITE;
+
+
+VARIABLE:valueOfTopMA2s[DATACOUNT-CONST_highPoint2+1]=0;
+priceOfHigh2:=STRTONUM(priceOfHPoint2);
+valueOfTopMA2s[1]:=closePrice[CONST_highPoint2];
+topLine2:= -1;
+For i=2 TO DATACOUNT-CONST_highPoint2+1 DO 
+BEGIN
+  valueOfTopMA2s[i]:=(valueOfTopMA2s[i-1]*(i-1)+closePrice[CONST_highPoint2+i-1])/i;
+  IF ( (valueOfTopMA2s[i]>=priceOfHigh2 AND valueOfTopMA2s[i-1]<=priceOfHigh2) 
+      OR (valueOfTopMA2s[i-1]>=priceOfHigh2 AND valueOfTopMA2s[i]<=priceOfHigh2) )
+     AND i>20
+	 AND topLine2=-1 THEN 
+	BEGIN
+	  topLine2:=i;
+	  BREAK;
+    END;
+END;
+
+DRAWTEXTEX(1,0,0,0,'短期压制2:MA['+NUMTOSTR(valueOfTopMA2s[1000],3)+']'),COLORYELLOW;
+短压2:MA(C,topLine2),COLORYELLOW;
+//短压22:MA(C,topLine2+10),LINETHICK0;
+//短压23:MA(C,topLine2-10),LINETHICK0;
+
+
+VARIABLE:valueOfTopMA3s[DATACOUNT-CONST_highPoint3+1]=0;
+valueOfTopMA3s[1]:=STRTONUM(priceOfHPoint3);
+topLine3:= -1;
+For i=2 TO DATACOUNT-CONST_highPoint3+1 DO 
+BEGIN
+  valueOfTopMA3s[i]:=(valueOfTopMA3s[i-1]*(i-1)+closePrice[CONST_highPoint3+i-1])/i;
+  IF ( (valueOfTopMA3s[i]>=valueOfTopMA3s[1] AND valueOfTopMA3s[i-1]<=valueOfTopMA3s[1]) 
+      OR (valueOfTopMA3s[i-1]>=valueOfTopMA3s[1] AND valueOfTopMA3s[i]<=valueOfTopMA3s[1]) )
+     AND i>20
+	 AND topLine3=-1 THEN 
+	BEGIN
+    topLine3:=i*D;
+	  BREAK;
+   END;
+END;
+
+DRAWTEXTEX(1,0,150,20,'中期压制1:MA['+NUMTOSTR(topLine3,0)+']'),COLORBLUE;
+中压1:MA(C,topLine3),COLORBLUE;
+
+VARIABLE:valueOfTopMA4s[DATACOUNT-CONST_highPoint4+1]=0;
+valueOfTopMA4s[1]:=STRTONUM(priceOfHPoint4);
+topLine4:= -1;
+For i=2 TO DATACOUNT-CONST_highPoint4+1 DO 
+BEGIN
+  valueOfTopMA4s[i]:=(valueOfTopMA4s[i-1]*(i-1)+closePrice[CONST_highPoint4+i-1])/i;
+  IF ( (valueOfTopMA4s[i]>=valueOfTopMA4s[1] AND valueOfTopMA4s[i-1]<=valueOfTopMA4s[1]) 
+      OR (valueOfTopMA4s[i-1]>=valueOfTopMA4s[1] AND valueOfTopMA4s[i]<=valueOfTopMA4s[1]) )
+     AND i>20
+	 AND topLine4=-1 THEN 
+	BEGIN
+    topLine4:=i*D;
+	  BREAK;
+   END;
+END;
+
+DRAWTEXTEX(1,0,150,0,'中期压制2:MA['+NUMTOSTR(topLine4,0)+']'),COLORGREEN;
+中压2:MA(C,topLine4),COLORGREEN;
+
+VARIABLE:valueOfTopMA5s[DATACOUNT-CONST_highPoint5+1]=0;
+valueOfTopMA5s[1]:=STRTONUM(priceOfHPoint5);
+topLine5:= -1;
+For i=2 TO DATACOUNT-CONST_highPoint5+1 DO 
+BEGIN
+  valueOfTopMA5s[i]:=(valueOfTopMA5s[i-1]*(i-1)+closePrice[CONST_highPoint5+i-1])/i;
+  IF ( (valueOfTopMA5s[i]>=valueOfTopMA5s[1] AND valueOfTopMA5s[i-1]<=valueOfTopMA5s[1]) 
+      OR (valueOfTopMA5s[i-1]>=valueOfTopMA5s[1] AND valueOfTopMA5s[i]<=valueOfTopMA5s[1]) )
+     AND i>20
+	 AND topLine5=-1 THEN 
+	BEGIN
+    topLine5:=i*D;
+	  BREAK;
+   END;
+END;
+
+DRAWTEXTEX(1,0,300,20,'长期压制1:MA['+NUMTOSTR(topLine5,0)+']'),COLORGRAY;
+长压1:MA(C,topLine5),COLORGRAY;
+
+VARIABLE:valueOfTopMA6s[DATACOUNT-CONST_highPoint6+1]=0;
+valueOfTopMA6s[1]:=STRTONUM(priceOfHPoint6);
+topLine6:= -1;
+For i=2 TO DATACOUNT-CONST_highPoint6+1 DO 
+BEGIN
+  valueOfTopMA6s[i]:=(valueOfTopMA6s[i-1]*(i-1)+closePrice[CONST_highPoint6+i-1])/i;
+  IF ( (valueOfTopMA6s[i]>=valueOfTopMA6s[1] AND valueOfTopMA6s[i-1]<=valueOfTopMA6s[1]) 
+      OR (valueOfTopMA6s[i-1]>=valueOfTopMA6s[1] AND valueOfTopMA6s[i]<=valueOfTopMA6s[1]) )
+     AND i>20
+	 AND topLine6=-1 THEN 
+	BEGIN
+    topLine6:=i*D;
+	  BREAK;
+   END;
+END;
+
+DRAWTEXTEX(1,0,300,0,'长期压制2:MA['+NUMTOSTR(topLine6,0)+']'),COLORRED;
+长压2:MA(C,topLine6),COLORRED;
+
+//lowPeakPoints:=L<REF(L,1) AND L<REFX(L,1)
+//    AND ( REF(L,1)<REF(L,2) OR REFX(L,1)<REFX(L,2) )  
+//    AND ( L<REF(L,2) AND L<REFX(L,2))
+//    AND CURRBARSCOUNT>4 ,LINETHICK0;
+//
+//
+//
+//	
+//lowPoint1:=BARSLAST(lowPeakPoints=1);
+//CONST_lowPoint1:=STRTONUM(NUMTOSTR(lowPoint1,0));
+//lowPoint2:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>CONST_lowPoint1+1);
+//CONST_lowPoint2:=STRTONUM(NUMTOSTR(lowPoint2,0));
+//lowPoint3:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>CONST_lowPoint2+1);
+//CONST_lowPoint3:=STRTONUM(NUMTOSTR(lowPoint3,0));
+//lowPoint4:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>CONST_lowPoint3+1);
+//CONST_lowPoint4:=STRTONUM(NUMTOSTR(lowPoint4,0));
+//lowPoint5:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>CONST_lowPoint4+1);
+//CONST_lowPoint5:=STRTONUM(NUMTOSTR(lowPoint5,0));
+//lowPoint6:=BARSLAST(lowPeakPoints=1 AND CURRBARSCOUNT>CONST_lowPoint5+1);
+//CONST_lowPoint6:=STRTONUM(NUMTOSTR(lowPoint6,0));
+//
+//
+//priceOfLPoint1:= NUMTOSTR(REF(L,lowPoint1),2);
+//priceOfLPoint2:= NUMTOSTR(REF(L,lowPoint2),2);
+//priceOfLPoint3:= NUMTOSTR(REF(L,lowPoint3),2);
+//priceOfLPoint4:= NUMTOSTR(REF(L,lowPoint4),2);
+//priceOfLPoint5:= NUMTOSTR(REF(L,lowPoint5),2);
+//priceOfLPoint6:= NUMTOSTR(REF(L,lowPoint6),2);
+//
+//DRAWICON(lowPeakPoints=1,L,5);
+//
+//
+//VARIABLE:valueOfLowMA1s[DATACOUNT-CONST_lowPoint1+1]=0;
+//valueOfLowMA1s[1]:=STRTONUM(priceOfLPoint1);
+//
+//bottomLine1:= -1;
+//For i=2 TO DATACOUNT-CONST_lowPoint1+1 DO 
+//BEGIN
+//  valueOfLowMA1s[i]:=(valueOfLowMA1s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint1-i+1])/i;
+//  IF ( (valueOfLowMA1s[i]>=valueOfLowMA1s[1] AND valueOfLowMA1s[i-1]<=valueOfLowMA1s[1]) 
+//      OR (valueOfLowMA1s[i-1]>=valueOfLowMA1s[1] AND valueOfLowMA1s[i]<=valueOfLowMA1s[1])
+//       )
+//     AND i>17
+//     AND bottomLine1=-1 THEN 
+//	BEGIN
+//    bottomLine1:=i;
+//	  BREAK;
+//   END;
+//END;
+//
+//DRAWTEXTEX(1,0,450,20,'短期支撑1:MA['+NUMTOSTR(bottomLine1,0)+']'),COLORWHITE;
+//短支1:MA(C,bottomLine1),COLORWHITE;
+//
+//VARIABLE:valueOfLowMA2s[DATACOUNT-CONST_lowPoint2+1]=0;
+//valueOfLowMA2s[1]:=STRTONUM(priceOfLPoint2);
+//
+//bottomLine2:= -1;
+//For i=2 TO DATACOUNT-CONST_lowPoint2+1 DO 
+//BEGIN
+//  valueOfLowMA2s[i]:=(valueOfLowMA2s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint2-i+1])/i;
+//  IF ( (valueOfLowMA2s[i]>=valueOfLowMA2s[1] AND valueOfLowMA2s[i-1]<=valueOfLowMA2s[1]) 
+//      OR (valueOfLowMA2s[i-1]>=valueOfLowMA2s[1] AND valueOfLowMA2s[i]<=valueOfLowMA2s[1])
+//       )
+//     AND i>9
+//     AND bottomLine2=-1 THEN 
+//	BEGIN
+//    bottomLine2:=i;
+//	  BREAK;
+//   END;
+//END;
+//
+//DRAWTEXTEX(1,0,450,0,'短期支撑2:MA['+NUMTOSTR(bottomLine2,0)+']'),COLORYELLOW;
+//短支2:MA(C,bottomLine2),COLORYELLOW;
+//
+//VARIABLE:valueOfLowMA3s[DATACOUNT-CONST_lowPoint3+1]=0;
+//valueOfLowMA3s[1]:=STRTONUM(priceOfLPoint3);
+//bottomLine3:= -1;
+//For i=2 TO DATACOUNT-CONST_lowPoint3+1 DO 
+//BEGIN
+//  valueOfLowMA3s[i]:=(valueOfLowMA3s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint3-i+1])/i;
+//  IF ( (valueOfLowMA3s[i]>=valueOfLowMA3s[1] AND valueOfLowMA3s[i-1]<=valueOfLowMA3s[1]) 
+//      OR (valueOfLowMA3s[i-1]>=valueOfLowMA3s[1] AND valueOfLowMA3s[i]<=valueOfLowMA3s[1])
+//       )
+//     AND i>9
+//     AND bottomLine3=-1 THEN 
+//	BEGIN
+//    bottomLine3:=i;
+//	  BREAK;
+//   END;
+//END;
+//
+//DRAWTEXTEX(1,0,600,20,'中期支撑1:MA['+NUMTOSTR(bottomLine3,0)+']'),COLORBLUE;
+//中支1:MA(C,bottomLine3),COLORBLUE;
+//
+//VARIABLE:valueOfLowMA4s[DATACOUNT-CONST_lowPoint4+1]=0;
+//valueOfLowMA4s[1]:=STRTONUM(priceOfLPoint4);
+//bottomLine4:= -1;
+//For i=2 TO DATACOUNT-CONST_lowPoint4+1 DO 
+//BEGIN
+//  valueOfLowMA4s[i]:=(valueOfLowMA4s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint4-i+1])/i;
+//  IF ( (valueOfLowMA4s[i]>=valueOfLowMA4s[1] AND valueOfLowMA4s[i-1]<=valueOfLowMA4s[1]) 
+//      OR (valueOfLowMA4s[i-1]>=valueOfLowMA4s[1] AND valueOfLowMA4s[i]<=valueOfLowMA4s[1]) )
+//     AND i>9
+//	 AND bottomLine4=-1 THEN 
+//	BEGIN
+//    bottomLine4:=i;
+//	  BREAK;
+//   END;
+//END;
+//
+//DRAWTEXTEX(1,0,600,0,'中期支撑2:MA['+NUMTOSTR(bottomLine4,0)+']'),COLORGREEN;
+//中支2:MA(C,bottomLine4),COLORGREEN;
+//
+//VARIABLE:valueOfLowMA5s[DATACOUNT-CONST_lowPoint5+1]=0;
+//valueOfLowMA5s[1]:=STRTONUM(priceOfLPoint5);
+//
+//bottomLine5:= -1;
+//For i=2 TO DATACOUNT-CONST_lowPoint5+1 DO 
+//BEGIN
+//  valueOfLowMA5s[i]:=(valueOfLowMA5s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint5-i+1])/i;
+//  IF ( (valueOfLowMA5s[i]>=valueOfLowMA5s[1] AND valueOfLowMA5s[i-1]<=valueOfLowMA5s[1]) 
+//      OR (valueOfLowMA5s[i-1]>=valueOfLowMA5s[1] AND valueOfLowMA5s[i]<=valueOfLowMA5s[1]) )
+//     AND i>9
+//	 AND bottomLine5=-1 THEN 
+//	BEGIN
+//    bottomLine5:=i;
+//	  BREAK;
+//   END;
+//END;
+//
+//DRAWTEXTEX(1,0,750,20,'长期支撑1:MA['+NUMTOSTR(bottomLine5,0)+']'),COLORGRAY;
+//长支1:MA(C,bottomLine5),COLORGRAY;
+//
+//VARIABLE:valueOfLowMA6s[DATACOUNT-CONST_lowPoint6+1]=0;
+//valueOfLowMA6s[1]:=STRTONUM(priceOfLPoint6);
+//
+//bottomLine6:= -1;
+//For i=2 TO DATACOUNT-CONST_lowPoint6+1 DO 
+//BEGIN
+//  valueOfLowMA6s[i]:=(valueOfLowMA6s[i-1]*(i-1)+closePrice[DATACOUNT-CONST_lowPoint6-i+1])/i;
+//  IF ( (valueOfLowMA6s[i]>=valueOfLowMA6s[1] AND valueOfLowMA6s[i-1]<=valueOfLowMA6s[1]) 
+//      OR (valueOfLowMA6s[i-1]>=valueOfLowMA6s[1] AND valueOfLowMA6s[i]<=valueOfLowMA6s[1]) )
+//     AND i>9
+//	 AND bottomLine6=-1 THEN 
+//	BEGIN
+//    bottomLine6:=i;
+//	  BREAK;
+//   END;
+//END;
+//
+//DRAWTEXTEX(1,0,750,0,'长期支撑2:MA['+NUMTOSTR(bottomLine6,0)+']'),COLORRED;
+//长支2:MA(C,bottomLine6),COLORRED;
